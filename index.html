@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Habit Consistency Tracker</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; }
+    h1 { color: #333; }
+    .calendar-container { width: 350px; margin: 20px auto; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+    .day, .weekday { padding: 10px; border: 1px solid #ccc; }
+    .weekday { background: #eee; font-weight: bold; }
+    .day { cursor: pointer; }
+    .day.selected { background-color: #4CAF50; color: white; }
+    .day.today { border: 2px solid red; }
+    button { margin-top: 20px; padding: 10px 20px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Habit Consistency Tracker</h1>
+  <div class="calendar-container">
+    <div class="header">
+      <button onclick="changeMonth(-1)">◀</button>
+      <h2 id="monthYear"></h2>
+      <button onclick="changeMonth(1)">▶</button>
+    </div>
+    <div class="days" id="calendar"></div>
+  </div>
+  <button onclick="resetConsistency()">Break Consistency</button>
+
+  <script>
+    const calendar = document.getElementById("calendar");
+    const monthYear = document.getElementById("monthYear");
+
+    let currentDate = new Date();
+    let savedDays = JSON.parse(localStorage.getItem("consistentDays")) || {};
+
+    // Render calendar
+    function renderCalendar() {
+      calendar.innerHTML = "";
+      let year = currentDate.getFullYear();
+      let month = currentDate.getMonth();
+
+      let firstDay = new Date(year, month, 1).getDay(); 
+      let daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      monthYear.textContent = currentDate.toLocaleString("default", { month: "long" }) + " " + year;
+
+      // Weekday headers
+      const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      weekdays.forEach(day => {
+        const weekdayEl = document.createElement("div");
+        weekdayEl.classList.add("weekday");
+        weekdayEl.textContent = day;
+        calendar.appendChild(weekdayEl);
+      });
+
+      // Empty slots before first day
+      for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement("div");
+        calendar.appendChild(empty);
+      }
+
+      // Days of the month
+      for (let i = 1; i <= daysInMonth; i++) {
+        const day = document.createElement("div");
+        day.classList.add("day");
+        day.textContent = i;
+
+        // Highlight today
+        let today = new Date();
+        if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+          day.classList.add("today");
+        }
+
+        // Check if saved
+        let key = `${year}-${month}-${i}`;
+        if (savedDays[key]) {
+          day.classList.add("selected");
+        }
+
+        // Toggle on click
+        day.addEventListener("click", () => {
+          if (day.classList.contains("selected")) {
+            day.classList.remove("selected");
+            delete savedDays[key];
+          } else {
+            day.classList.add("selected");
+            savedDays[key] = true;
+          }
+          localStorage.setItem("consistentDays", JSON.stringify(savedDays));
+        });
+
+        calendar.appendChild(day);
+      }
+    }
+
+    // Change month
+    function changeMonth(offset) {
+      currentDate.setMonth(currentDate.getMonth() + offset);
+      renderCalendar();
+    }
+
+    // Reset everything
+    function resetConsistency() {
+      savedDays = {};
+      localStorage.removeItem("consistentDays");
+      renderCalendar();
+    }
+
+    renderCalendar();
+  </script>
+</body>
+</html>
