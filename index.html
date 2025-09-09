@@ -7,69 +7,122 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      margin: 20px;
+      margin: 10px;
       background: #f9f9f9;
     }
-    h1 { color: #333; }
+    h1 { color: #333; font-size: 1.8rem; }
+
+    /* Calendar navigation */
+    .nav {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin: 10px 0;
+      flex-wrap: wrap;
+    }
+    .nav button {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 5px;
+      background: #4caf50;
+      color: white;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .nav button:hover { background: #45a049; }
+
+    #monthYear {
+      font-size: 1.4rem;
+      margin: 5px 0;
+    }
+
+    /* Calendar grid */
     #calendar {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 5px;
+      gap: 4px;
       margin-top: 10px;
     }
     .day, .empty {
-      padding: 15px;
+      padding: 12px 0;
       border: 1px solid #ddd;
       border-radius: 6px;
       cursor: pointer;
       background: #fff;
       transition: 0.2s;
+      font-size: 0.9rem;
     }
     .day:hover { background: #f0f0f0; }
     .selected { background: #4caf50; color: white; }
     .disabled { background: #eee; color: #999; cursor: not-allowed; }
     .empty { background: transparent; border: none; cursor: default; }
-    #monthYear {
-      font-size: 20px;
-      margin: 10px 0;
-    }
+
+    /* Rewards */
     .rewards {
-      margin-top: 20px;
+      margin-top: 15px;
       text-align: left;
-      max-width: 400px;
+      max-width: 90%;
       margin-left: auto;
       margin-right: auto;
       background: #fff;
-      padding: 15px;
+      padding: 12px;
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      font-size: 0.9rem;
     }
     .reward-item {
       display: flex;
       justify-content: space-between;
-      padding: 8px 0;
+      align-items: center;
+      padding: 6px 0;
       border-bottom: 1px solid #eee;
     }
     .reward-item:last-child { border-bottom: none; }
+
     button {
       background: #ff4d4d;
       border: none;
-      padding: 5px 10px;
+      padding: 6px 10px;
       border-radius: 4px;
       color: white;
       cursor: pointer;
+      font-size: 0.8rem;
     }
     button:hover { background: #e60000; }
     .break-btn {
-      margin-top: 20px;
+      margin-top: 15px;
       background: #444;
     }
     .break-btn:hover { background: #000; }
+
+    /* 📱 Mobile responsiveness */
+    @media (max-width: 600px) {
+      h1 { font-size: 1.5rem; }
+      #monthYear { font-size: 1.2rem; }
+      .day, .empty {
+        font-size: 0.7rem;
+        padding: 8px 0;
+      }
+      .nav button {
+        font-size: 0.7rem;
+        padding: 4px 6px;
+      }
+      button { font-size: 0.7rem; padding: 5px 8px; }
+    }
   </style>
 </head>
 <body>
   <h1>Consistency Tracker</h1>
-  <h2 id="monthYear"></h2>
+
+  <!-- Navigation -->
+  <div class="nav">
+    <button onclick="prevYear()">⏪ Prev Year</button>
+    <button onclick="prevMonth()">⬅️ Prev Month</button>
+    <span id="monthYear"></span>
+    <button onclick="nextMonth()">Next Month ➡️</button>
+    <button onclick="nextYear()">Next Year ⏩</button>
+  </div>
+
   <div id="calendar"></div>
 
   <div class="rewards">
@@ -110,6 +163,7 @@
         let el = document.createElement("div");
         el.textContent = d;
         el.style.fontWeight = "bold";
+        el.style.background = "#fafafa";
         calendarEl.appendChild(el);
       });
 
@@ -127,12 +181,10 @@
         let key = `${year}-${month+1}-${day}`;
         let cellDate = new Date(year, month, day);
 
-        // Disable future dates
         if (cellDate > today) {
           cell.classList.add("disabled");
         }
 
-        // Already selected
         if (selectedDays.includes(key)) {
           cell.classList.add("selected");
         }
@@ -147,16 +199,13 @@
 
     function toggleDay(key, cell) {
       if (selectedDays.includes(key)) {
-        // Unselect if already selected
         selectedDays = selectedDays.filter(d => d !== key);
         cell.classList.remove("selected");
       } else {
-        // Select new day
         selectedDays.push(key);
         cell.classList.add("selected");
       }
 
-      // Rewards check
       let consistencyCount = selectedDays.length;
       if (consistencyCount > 0 && consistencyCount % 10 === 0) {
         let reward = rewardPool[(consistencyCount/10 - 1) % rewardPool.length];
@@ -199,6 +248,26 @@
     function saveData() {
       localStorage.setItem("selectedDays", JSON.stringify(selectedDays));
       localStorage.setItem("rewards", JSON.stringify(rewards));
+    }
+
+    // Navigation
+    function prevMonth() {
+      month--;
+      if (month < 0) { month = 11; year--; }
+      renderCalendar();
+    }
+    function nextMonth() {
+      month++;
+      if (month > 11) { month = 0; year++; }
+      renderCalendar();
+    }
+    function prevYear() {
+      year--;
+      renderCalendar();
+    }
+    function nextYear() {
+      year++;
+      renderCalendar();
     }
 
     renderCalendar();
