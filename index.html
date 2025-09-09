@@ -4,147 +4,78 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Habit Tracker</title>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-}
-.calendar-container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    max-width: 400px;
-    width: 100%;
-}
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-.header h2 {
-    font-size: 22px;
-    margin: 0;
-}
-.nav-buttons button {
-    font-size: 16px;
-    padding: 6px 12px;
-    border-radius: 8px;
-    border: none;
-    background-color: #2196F3;
-    color: white;
-    cursor: pointer;
-    margin: 0 2px;
-    transition: 0.2s;
-}
-.nav-buttons button:hover {
-    background-color: #1976D2;
-}
-.calendar {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-}
-.day-name, .calendar-day {
-    text-align: center;
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 6px;
-}
-.day-name {
-    font-weight: bold;
-    background-color: #e0e0e0;
-}
-.calendar-day {
-    background-color: #f0f8ff;
-    cursor: pointer;
-    transition: 0.2s;
-}
-.calendar-day:hover {
-    background-color: #b3e5fc;
-}
-.calendar-day.selected {
-    background-color: #4caf50;
-    color: white;
-    font-weight: bold;
-}
-.buttons {
-    margin-top: 15px;
-    display: flex;
-    justify-content: center;
-}
-.buttons button {
-    padding: 10px 16px;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-.break-btn {
-    background-color: #f44336;
-    color: white;
-}
-.break-btn:hover {
-    background-color: #d32f2f;
-}
-.reward-container {
-    margin-top: 15px;
-    background-color: #ffeb3b;
-    padding: 10px;
-    border-radius: 8px;
-    text-align: center;
-    display: none; /* Hidden by default */
-}
-.reward-container button {
-    margin-top: 8px;
-    padding: 8px 12px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-.reward-container button:hover {
-    background-color: #388e3c;
-}
-@media (max-width: 600px) {
-    .header h2 { font-size: 20px; }
-    .day-name, .calendar-day { font-size: 18px; padding: 12px; }
-    .nav-buttons button, .buttons button { font-size: 18px; padding: 12px 16px; }
-}
+  .calendar-day {
+      border-radius: 6px;
+      padding: 10px;
+      margin: 2px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s;
+      background-color: #f0f8ff;
+  }
+  .calendar-day:hover {
+      background-color: #b3e5fc;
+  }
+  .calendar-day.selected {
+      background-color: #4caf50;
+      color: white;
+      font-weight: bold;
+  }
+  .day-name {
+      font-weight: bold;
+      text-align: center;
+      padding: 10px;
+  }
+  .disabled-day {
+      background-color: #e0e0e0 !important;
+      color: #888 !important;
+      cursor: not-allowed !important;
+  }
+  .reward-container {
+      display: none;
+  }
 </style>
 </head>
-<body>
-<div class="calendar-container">
-    <div class="header">
-        <div class="nav-buttons">
-            <button id="prevYear">&laquo;</button>
-            <button id="prevMonth">&lsaquo;</button>
+<body class="bg-light">
+
+<div class="container my-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                <div class="btn-group mb-2">
+                    <button id="prevYear" class="btn btn-primary">&laquo;</button>
+                    <button id="prevMonth" class="btn btn-primary">&lsaquo;</button>
+                </div>
+                <h4 id="monthYear" class="mb-2 text-center flex-grow-1"></h4>
+                <div class="btn-group mb-2">
+                    <button id="nextMonth" class="btn btn-primary">&rsaquo;</button>
+                    <button id="nextYear" class="btn btn-primary">&raquo;</button>
+                </div>
+            </div>
+
+            <div class="row text-center fw-bold" id="dayNames"></div>
+            <div class="row text-center" id="calendar"></div>
+
+            <div class="d-flex justify-content-center mt-3">
+                <button id="breakBtn" class="btn btn-danger">Break Consistency</button>
+            </div>
+
+            <div class="reward-container mt-3 p-3 bg-warning rounded text-center" id="rewardContainer">
+                🎉 You earned a reward! 🎉<br>
+                <button id="useRewardBtn" class="btn btn-success mt-2">Use Reward</button>
+            </div>
         </div>
-        <h2 id="monthYear"></h2>
-        <div class="nav-buttons">
-            <button id="nextMonth">&rsaquo;</button>
-            <button id="nextYear">&raquo;</button>
-        </div>
-    </div>
-    <div class="calendar" id="calendar"></div>
-    <div class="buttons">
-        <button class="break-btn" id="breakBtn">Break Consistency</button>
-    </div>
-    <div class="reward-container" id="rewardContainer">
-        🎉 You earned a reward! 🎉<br>
-        <button id="useRewardBtn">Use Reward</button>
     </div>
 </div>
 
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 const calendarEl = document.getElementById('calendar');
+const dayNamesEl = document.getElementById('dayNames');
 const monthYearEl = document.getElementById('monthYear');
 const prevMonthBtn = document.getElementById('prevMonth');
 const nextMonthBtn = document.getElementById('nextMonth');
@@ -165,7 +96,7 @@ function getSortedDates(){
     return selectedDates.map(d => new Date(d)).sort((a,b)=>a-b);
 }
 
-// Check for any streak of 10 consecutive days
+// Check for streaks of 10 consecutive days
 function checkReward() {
     const sortedDates = getSortedDates();
     let streak = 1;
@@ -185,11 +116,18 @@ function checkReward() {
         }
     }
 
-    // If no streak >=10, remove reward
-    if(!sortedDates.some((_,i)=> {
-        if(i===0) return false;
-        return (sortedDates[i]-sortedDates[i-1])/(1000*60*60*24)===1;
-    }) || sortedDates.length < 10){
+    // Hide reward if no streak >=10
+    let hasStreak10 = false;
+    for(let i=0;i<sortedDates.length;i++){
+        let count=1;
+        for(let j=i+1;j<sortedDates.length;j++){
+            const diff = (sortedDates[j]-sortedDates[j-1])/(1000*60*60*24);
+            if(diff === 1) count++; else break;
+        }
+        if(count>=10) { hasStreak10 = true; break; }
+    }
+
+    if(!hasStreak10){
         earned = false;
         rewardEarned = false;
         localStorage.setItem('rewardEarned', JSON.stringify(false));
@@ -200,48 +138,60 @@ function checkReward() {
 
 function renderCalendar(month, year) {
     calendarEl.innerHTML = '';
+    dayNamesEl.innerHTML = '';
+
     monthYearEl.textContent = `${new Date(year, month).toLocaleString('default', { month: 'long' })} ${year}`;
-    dayNames.forEach(d => {
-        const dayNameEl = document.createElement('div');
-        dayNameEl.classList.add('day-name');
-        dayNameEl.textContent = d;
-        calendarEl.appendChild(dayNameEl);
+
+    // Day names row
+    dayNames.forEach(d=>{
+        const div = document.createElement('div');
+        div.className = 'col border day-name';
+        div.textContent = d;
+        dayNamesEl.appendChild(div);
     });
 
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month+1, 0).getDate();
-    for(let i=0;i<firstDay;i++){
-        calendarEl.appendChild(document.createElement('div'));
-    }
+    const totalCells = firstDay + daysInMonth;
+    const rows = Math.ceil(totalCells/7);
 
-    for(let day=1; day<=daysInMonth; day++){
-        const dateStr = `${year}-${month+1}-${day}`;
-        const dayEl = document.createElement('div');
-        dayEl.classList.add('calendar-day');
-        dayEl.textContent = day;
+    let dayCounter = 1;
+    for(let r=0;r<rows;r++){
+        const row = document.createElement('div');
+        row.className = 'row mb-1';
+        for(let c=0;c<7;c++){
+            const col = document.createElement('div');
+            col.className = 'col p-1';
 
-        const dateObj = new Date(year, month, day);
-        if(dateObj > new Date()){
-            dayEl.style.backgroundColor = '#e0e0e0';
-            dayEl.style.color = '#888';
-            dayEl.style.cursor = 'not-allowed';
-        } else {
-            if(selectedDates.includes(dateStr)){
-                dayEl.classList.add('selected');
-            }
-            dayEl.addEventListener('click', ()=>{
-                if(selectedDates.includes(dateStr)){
-                    selectedDates = selectedDates.filter(d=>d!==dateStr);
-                    dayEl.classList.remove('selected');
+            if(r===0 && c<firstDay){
+                col.innerHTML = '';
+            } else if(dayCounter <= daysInMonth){
+                col.innerHTML = `<div class="calendar-day">${dayCounter}</div>`;
+                const dayEl = col.firstChild;
+                const dateStr = `${year}-${month+1}-${dayCounter}`;
+                const dateObj = new Date(year, month, dayCounter);
+
+                if(dateObj > new Date()){
+                    dayEl.classList.add('disabled-day');
                 } else {
-                    selectedDates.push(dateStr);
-                    dayEl.classList.add('selected');
+                    if(selectedDates.includes(dateStr)) dayEl.classList.add('selected');
+                    dayEl.addEventListener('click', ()=>{
+                        if(selectedDates.includes(dateStr)){
+                            selectedDates = selectedDates.filter(d=>d!==dateStr);
+                            dayEl.classList.remove('selected');
+                        } else {
+                            selectedDates.push(dateStr);
+                            dayEl.classList.add('selected');
+                        }
+                        localStorage.setItem('selectedDates', JSON.stringify(selectedDates));
+                        checkReward();
+                    });
                 }
-                localStorage.setItem('selectedDates', JSON.stringify(selectedDates));
-                checkReward();
-            });
+                dayCounter++;
+            }
+            row.appendChild(col);
         }
-        calendarEl.appendChild(dayEl);
+        calendarEl.appendChild(row);
     }
 }
 
@@ -282,5 +232,6 @@ useRewardBtn.addEventListener('click', ()=>{
 renderCalendar(currentMonth, currentYear);
 checkReward();
 </script>
+
 </body>
 </html>
