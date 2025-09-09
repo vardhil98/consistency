@@ -1,277 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Consistency Tracker</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 10px;
-      background: #f9f9f9;
-    }
-    h1 { color: #333; font-size: 1.8rem; }
-
-    /* Calendar navigation */
-    .nav {
-      display: flex;
-      justify-content: center;
-      gap: 5px;
-      margin: 10px 0;
-      flex-wrap: wrap;
-    }
-    .nav button {
-      padding: 6px 10px;
-      border: none;
-      border-radius: 5px;
-      background: #4caf50;
-      color: white;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
-    .nav button:hover { background: #45a049; }
-
-    #monthYear {
-      font-size: 1.4rem;
-      margin: 5px 0;
-    }
-
-    /* Calendar grid */
-    #calendar {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
-      margin-top: 10px;
-    }
-    .day, .empty {
-      padding: 12px 0;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      cursor: pointer;
-      background: #fff;
-      transition: 0.2s;
-      font-size: 0.9rem;
-    }
-    .day:hover { background: #f0f0f0; }
-    .selected { background: #4caf50; color: white; }
-    .disabled { background: #eee; color: #999; cursor: not-allowed; }
-    .empty { background: transparent; border: none; cursor: default; }
-
-    /* Rewards */
-    .rewards {
-      margin-top: 15px;
-      text-align: left;
-      max-width: 90%;
-      margin-left: auto;
-      margin-right: auto;
-      background: #fff;
-      padding: 12px;
-      border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      font-size: 0.9rem;
-    }
-    .reward-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 0;
-      border-bottom: 1px solid #eee;
-    }
-    .reward-item:last-child { border-bottom: none; }
-
-    button {
-      background: #ff4d4d;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 4px;
-      color: white;
-      cursor: pointer;
-      font-size: 0.8rem;
-    }
-    button:hover { background: #e60000; }
-    .break-btn {
-      margin-top: 15px;
-      background: #444;
-    }
-    .break-btn:hover { background: #000; }
-
-    /* 📱 Mobile responsiveness */
-    @media (max-width: 600px) {
-      h1 { font-size: 1.5rem; }
-      #monthYear { font-size: 1.2rem; }
-      .day, .empty {
-        font-size: 0.7rem;
-        padding: 8px 0;
-      }
-      .nav button {
-        font-size: 0.7rem;
-        padding: 4px 6px;
-      }
-      button { font-size: 0.7rem; padding: 5px 8px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habit Tracker</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+.calendar-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    max-width: 400px;
+    width: 100%;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.header h2 {
+    font-size: 22px;
+    margin: 0;
+}
+.nav-buttons button {
+    font-size: 16px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: none;
+    background-color: #2196F3;
+    color: white;
+    cursor: pointer;
+    margin: 0 2px;
+    transition: 0.2s;
+}
+.nav-buttons button:hover {
+    background-color: #1976D2;
+}
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+.day-name, .calendar-day {
+    text-align: center;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 6px;
+}
+.day-name {
+    font-weight: bold;
+    background-color: #e0e0e0;
+}
+.calendar-day {
+    background-color: #f0f8ff;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.calendar-day:hover {
+    background-color: #b3e5fc;
+}
+.calendar-day.selected {
+    background-color: #4caf50;
+    color: white;
+    font-weight: bold;
+}
+.buttons {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+}
+.buttons button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.break-btn {
+    background-color: #f44336;
+    color: white;
+}
+.break-btn:hover {
+    background-color: #d32f2f;
+}
+.reward-container {
+    margin-top: 15px;
+    background-color: #ffeb3b;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    display: none; /* Hidden by default */
+}
+.reward-container button {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.reward-container button:hover {
+    background-color: #388e3c;
+}
+@media (max-width: 600px) {
+    .header h2 { font-size: 20px; }
+    .day-name, .calendar-day { font-size: 18px; padding: 12px; }
+    .nav-buttons button, .buttons button { font-size: 18px; padding: 12px 16px; }
+}
+</style>
 </head>
 <body>
-  <h1>Consistency Tracker</h1>
+<div class="calendar-container">
+    <div class="header">
+        <div class="nav-buttons">
+            <button id="prevYear">&laquo;</button>
+            <button id="prevMonth">&lsaquo;</button>
+        </div>
+        <h2 id="monthYear"></h2>
+        <div class="nav-buttons">
+            <button id="nextMonth">&rsaquo;</button>
+            <button id="nextYear">&raquo;</button>
+        </div>
+    </div>
+    <div class="calendar" id="calendar"></div>
+    <div class="buttons">
+        <button class="break-btn" id="breakBtn">Break Consistency</button>
+    </div>
+    <div class="reward-container" id="rewardContainer">
+        🎉 You earned a reward! 🎉<br>
+        <button id="useRewardBtn">Use Reward</button>
+    </div>
+</div>
 
-  <!-- Navigation -->
-  <div class="nav">
-    <button onclick="prevYear()">⏪ Prev Year</button>
-    <button onclick="prevMonth()">⬅️ Prev Month</button>
-    <span id="monthYear"></span>
-    <button onclick="nextMonth()">Next Month ➡️</button>
-    <button onclick="nextYear()">Next Year ⏩</button>
-  </div>
+<script>
+const calendarEl = document.getElementById('calendar');
+const monthYearEl = document.getElementById('monthYear');
+const prevMonthBtn = document.getElementById('prevMonth');
+const nextMonthBtn = document.getElementById('nextMonth');
+const prevYearBtn = document.getElementById('prevYear');
+const nextYearBtn = document.getElementById('nextYear');
+const breakBtn = document.getElementById('breakBtn');
+const rewardContainer = document.getElementById('rewardContainer');
+const useRewardBtn = document.getElementById('useRewardBtn');
 
-  <div id="calendar"></div>
+let selectedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];
+let rewardEarned = JSON.parse(localStorage.getItem('rewardEarned')) || false;
+let today = new Date();
+let currentMonth = today.getMonth();
+let currentYear = today.getFullYear();
+const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-  <div class="rewards">
-    <h3>Unlocked Rewards 🎁</h3>
-    <div id="rewardList"></div>
-  </div>
+function getSortedDates(){
+    return selectedDates.map(d => new Date(d)).sort((a,b)=>a-b);
+}
 
-  <button class="break-btn" onclick="breakConsistency()">Break Consistency</button>
+// Check for any streak of 10 consecutive days
+function checkReward() {
+    const sortedDates = getSortedDates();
+    let streak = 1;
+    let earned = rewardEarned || false;
 
-  <script>
-    const monthYearEl = document.getElementById("monthYear");
-    const calendarEl = document.getElementById("calendar");
-    const rewardListEl = document.getElementById("rewardList");
-
-    const monthNames = [
-      "January","February","March","April","May","June",
-      "July","August","September","October","November","December"
-    ];
-
-    let today = new Date();
-    let month = today.getMonth();
-    let year = today.getFullYear();
-
-    let selectedDays = JSON.parse(localStorage.getItem("selectedDays")) || [];
-    let rewards = JSON.parse(localStorage.getItem("rewards")) || [];
-
-    const rewardPool = ["Starbucks Drink ☕", "Real Fruit Juice 🥤", "Booster Juice 🍹"];
-
-    function renderCalendar() {
-      calendarEl.innerHTML = "";
-      monthYearEl.textContent = `${monthNames[month]} ${year}`;
-
-      let firstDay = new Date(year, month, 1).getDay();
-      let daysInMonth = new Date(year, month + 1, 0).getDate();
-
-      const weekdays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-      weekdays.forEach(d => {
-        let el = document.createElement("div");
-        el.textContent = d;
-        el.style.fontWeight = "bold";
-        el.style.background = "#fafafa";
-        calendarEl.appendChild(el);
-      });
-
-      for (let i = 0; i < firstDay; i++) {
-        let empty = document.createElement("div");
-        empty.classList.add("empty");
-        calendarEl.appendChild(empty);
-      }
-
-      for (let day = 1; day <= daysInMonth; day++) {
-        let cell = document.createElement("div");
-        cell.classList.add("day");
-        cell.textContent = day;
-
-        let key = `${year}-${month+1}-${day}`;
-        let cellDate = new Date(year, month, day);
-
-        if (cellDate > today) {
-          cell.classList.add("disabled");
+    for(let i=1;i<sortedDates.length;i++){
+        const diff = (sortedDates[i]-sortedDates[i-1])/(1000*60*60*24);
+        if(diff === 1){
+            streak++;
+            if(streak >= 10 && !earned){
+                earned = true;
+                rewardEarned = true;
+                localStorage.setItem('rewardEarned', JSON.stringify(true));
+            }
+        } else {
+            streak = 1; // streak broken
         }
+    }
 
-        if (selectedDays.includes(key)) {
-          cell.classList.add("selected");
+    // If no streak >=10, remove reward
+    if(!sortedDates.some((_,i)=> {
+        if(i===0) return false;
+        return (sortedDates[i]-sortedDates[i-1])/(1000*60*60*24)===1;
+    }) || sortedDates.length < 10){
+        earned = false;
+        rewardEarned = false;
+        localStorage.setItem('rewardEarned', JSON.stringify(false));
+    }
+
+    rewardContainer.style.display = earned ? 'block' : 'none';
+}
+
+function renderCalendar(month, year) {
+    calendarEl.innerHTML = '';
+    monthYearEl.textContent = `${new Date(year, month).toLocaleString('default', { month: 'long' })} ${year}`;
+    dayNames.forEach(d => {
+        const dayNameEl = document.createElement('div');
+        dayNameEl.classList.add('day-name');
+        dayNameEl.textContent = d;
+        calendarEl.appendChild(dayNameEl);
+    });
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month+1, 0).getDate();
+    for(let i=0;i<firstDay;i++){
+        calendarEl.appendChild(document.createElement('div'));
+    }
+
+    for(let day=1; day<=daysInMonth; day++){
+        const dateStr = `${year}-${month+1}-${day}`;
+        const dayEl = document.createElement('div');
+        dayEl.classList.add('calendar-day');
+        dayEl.textContent = day;
+
+        const dateObj = new Date(year, month, day);
+        if(dateObj > new Date()){
+            dayEl.style.backgroundColor = '#e0e0e0';
+            dayEl.style.color = '#888';
+            dayEl.style.cursor = 'not-allowed';
+        } else {
+            if(selectedDates.includes(dateStr)){
+                dayEl.classList.add('selected');
+            }
+            dayEl.addEventListener('click', ()=>{
+                if(selectedDates.includes(dateStr)){
+                    selectedDates = selectedDates.filter(d=>d!==dateStr);
+                    dayEl.classList.remove('selected');
+                } else {
+                    selectedDates.push(dateStr);
+                    dayEl.classList.add('selected');
+                }
+                localStorage.setItem('selectedDates', JSON.stringify(selectedDates));
+                checkReward();
+            });
         }
-
-        if (!cell.classList.contains("disabled")) {
-          cell.addEventListener("click", () => toggleDay(key, cell));
-        }
-
-        calendarEl.appendChild(cell);
-      }
+        calendarEl.appendChild(dayEl);
     }
+}
 
-    function toggleDay(key, cell) {
-      if (selectedDays.includes(key)) {
-        selectedDays = selectedDays.filter(d => d !== key);
-        cell.classList.remove("selected");
-      } else {
-        selectedDays.push(key);
-        cell.classList.add("selected");
-      }
+prevMonthBtn.addEventListener('click', ()=>{
+    currentMonth--;
+    if(currentMonth<0){ currentMonth=11; currentYear--; }
+    renderCalendar(currentMonth, currentYear);
+});
+nextMonthBtn.addEventListener('click', ()=>{
+    currentMonth++;
+    if(currentMonth>11){ currentMonth=0; currentYear++; }
+    renderCalendar(currentMonth, currentYear);
+});
+prevYearBtn.addEventListener('click', ()=>{
+    currentYear--;
+    renderCalendar(currentMonth, currentYear);
+});
+nextYearBtn.addEventListener('click', ()=>{
+    currentYear++;
+    renderCalendar(currentMonth, currentYear);
+});
 
-      let consistencyCount = selectedDays.length;
-      if (consistencyCount > 0 && consistencyCount % 10 === 0) {
-        let reward = rewardPool[(consistencyCount/10 - 1) % rewardPool.length];
-        if (!rewards.includes(reward)) {
-          rewards.push(reward);
-          alert(`🎉 Congrats! You earned: ${reward}`);
-        }
-      }
+breakBtn.addEventListener('click', ()=>{
+    selectedDates = [];
+    localStorage.removeItem('selectedDates');
+    rewardEarned = false;
+    localStorage.setItem('rewardEarned', JSON.stringify(false));
+    renderCalendar(currentMonth, currentYear);
+    checkReward();
+});
 
-      saveData();
-      renderRewards();
-    }
+useRewardBtn.addEventListener('click', ()=>{
+    rewardEarned = false;
+    localStorage.setItem('rewardEarned', JSON.stringify(false));
+    rewardContainer.style.display = 'none';
+});
 
-    function renderRewards() {
-      rewardListEl.innerHTML = "";
-      rewards.forEach((r, idx) => {
-        let div = document.createElement("div");
-        div.classList.add("reward-item");
-        div.innerHTML = `<span>${r}</span>
-          <button onclick="useReward(${idx})">Use</button>`;
-        rewardListEl.appendChild(div);
-      });
-    }
-
-    function useReward(index) {
-      rewards.splice(index, 1);
-      saveData();
-      renderRewards();
-    }
-
-    function breakConsistency() {
-      selectedDays = [];
-      rewards = [];
-      localStorage.clear();
-      alert("Consistency manually broken ❌. Starting over!");
-      renderCalendar();
-      renderRewards();
-    }
-
-    function saveData() {
-      localStorage.setItem("selectedDays", JSON.stringify(selectedDays));
-      localStorage.setItem("rewards", JSON.stringify(rewards));
-    }
-
-    // Navigation
-    function prevMonth() {
-      month--;
-      if (month < 0) { month = 11; year--; }
-      renderCalendar();
-    }
-    function nextMonth() {
-      month++;
-      if (month > 11) { month = 0; year++; }
-      renderCalendar();
-    }
-    function prevYear() {
-      year--;
-      renderCalendar();
-    }
-    function nextYear() {
-      year++;
-      renderCalendar();
-    }
-
-    renderCalendar();
-    renderRewards();
-  </script>
+renderCalendar(currentMonth, currentYear);
+checkReward();
+</script>
 </body>
 </html>
